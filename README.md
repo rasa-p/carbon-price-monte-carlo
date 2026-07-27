@@ -6,4 +6,4 @@ Comparison of Geometric Brownian Motion with a mean-reverting (Ornstein-Uhlenbec
 
 ## Author
 Rasa Pedram — MSci Natural Sciences, UCL
- "
+ 
