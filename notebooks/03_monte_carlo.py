@@ -54,3 +54,9 @@ plt.title("Monte Carlo Simulation of EU Carbon Prices")
 plt.legend()
 plt.savefig("figures/04_monte_carlo_fan.png", dpi=100)
 plt.show()
+
+# -----Conclusions-----
+# Since the data from 2022-2026 has a mean of -0.0002, we would expect the simulations' means so be roughly flat, as we see
+# in the plot. 
+# The 5th and 95th pencentiles determine there is a 90% confidence interval that future prices will be roughly between 70 and 120 EUR.
+# We could increase the reliability of this prediction by increasing the number of paths simulated
