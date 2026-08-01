@@ -30,29 +30,29 @@ Z = np.random.normal(0,1, size = (n_days, n_paths))  # Generate 2D array of rand
 S_0 = df["Price"].iloc[-1]    # Last observed price
 daily_log_returns = (mu - 0.5 * sigma**2) * dt + (sigma * np.sqrt(dt) * Z)    # 2D array of daily log returns for each path (252, 10000)
 cumulative_log_returns = np.cumsum(daily_log_returns, axis=0) 
-S_T_paths = S_0 * np.exp(cumulative_log_returns)
+price_paths = S_0 * np.exp(cumulative_log_returns)
 
 # At this point, we have a 2D array (252,10000), but each first day is different, so we should add 
 # the same starting price to each path 
 
-S_T_paths = np.vstack([np.full(n_paths, S_0), S_T_paths]) # Add the starting price S_0 to the first row (vstack adds row to the top of S_T_paths)
+price_paths = np.vstack([np.full(n_paths, S_0), price_paths]) # Add the starting price S_0 to the first row (vstack adds row to the top of price_paths)
 
 #Plotting the similuated paths
 
 for i in range(100):    # only plot 100 paths to avoid cluttering 
-    plt.plot(S_T_paths[:,i], color= "blue", alpha=0.1)
-plt.plot()
+    plt.plot(price_paths[:,i], color= "blue", alpha=0.1)
+
 
 # Showing the mean and 5th and 95th percentiles of the simulated paths, therby giving a 90% confidence interval for the future prices
-plt.plot(np.mean(S_T_paths, axis=1), color="red", linewidth=1, label="Mean Paths")
-plt.plot(np.percentile(S_T_paths, 5, axis=1), color="black", linewidth=1, label='5th percentile')
-plt.plot(np.percentile(S_T_paths, 95, axis=1), color="black", linewidth=1, label='95th percentile')
+plt.plot(np.mean(price_paths, axis=1), color="red", linewidth=1, label="Mean Paths")
+plt.plot(np.percentile(price_paths, 5, axis=1), color="black", linewidth=1, label='5th percentile')
+plt.plot(np.percentile(price_paths, 95, axis=1), color="black", linewidth=1, label='95th percentile')
 
 plt.xlabel("Time")
 plt.ylabel("Price (EUR)")
 plt.title("Monte Carlo Simulation of EU Carbon Prices")
 plt.legend()
-plt.savefig("figures/04_monte_carlo_fan.png", dpi=100)
+plt.savefig("figures/03_monte_carlo_fan.png", dpi=100)
 plt.show()
 
 # -----Conclusions-----
