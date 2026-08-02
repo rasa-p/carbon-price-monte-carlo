@@ -11,7 +11,7 @@ df = df.dropna()  # Remove rows with NaN values (first row will have NaN log ret
 
 # Random walk simulation. Given today's price, what are the possible prices in 1 year (252 trading days)?
 
-rng = np.random.default_rng(42) # gives same random numbers each run so figures and numbers don't change
+rng = np.random.default_rng(50) # gives same random numbers each run so figures and numbers don't change
 
 n_days = 252  # Number of trading days in a year
 dt = 1/n_days  # Time increment 
