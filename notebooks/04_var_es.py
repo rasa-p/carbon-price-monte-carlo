@@ -11,6 +11,7 @@ df = df.dropna()  # Remove rows with NaN values (first row will have NaN log ret
 
 # Random walk simulation. Given today's price, what are the possible prices in 1 year (252 trading days)?
 
+rng = np.random.default_rng(50) # gives same random numbers each run so figures and numbers don't change
 
 n_days = 252  # Number of trading days in a year
 dt = 1/n_days  # Time increment 
@@ -19,7 +20,7 @@ n_paths = 10000
 mu = np.mean(df["Log_Returns"]) * n_days  # Annualized mean of log returns
 sigma = np.std(df["Log_Returns"]) * np.sqrt(n_days) # Annualized standard deviation of log returns
 
-Z = np.random.normal(0,1, size = (n_days, n_paths))  # Generate 2D array of random numbers from normal dist. T be used to generate random paths
+Z = rng.normal(0,1, size = (n_days, n_paths))  # Generate 2D array of random numbers from normal dist. T be used to generate random paths
 
 # Geometric Brownian Motion formula: S(t) = S(0) * exp((mu - 0.5 * sigma^2) * dt + sigma * sqrt(dt) * Z)
 # log returns: ln(S(t)/S(0)) = (mu - 0.5 * sigma^2) * dt + sigma * sqrt(dt) * Z
@@ -132,7 +133,7 @@ for cl, metrics in results.items():
 # ----------------------------------------------------------------------------------------------------------------------------------------
 # Checking against the analytical solution 
 # ----------------------------------------------------------------------------------------------------------------------------------------
-# Under GBM: S(T) = S(0) * exp((mu - 0.5 * sigma^2) * T + sigma * sqrt(T) * Z#
+# Under GBM: S(T) = S(0) * exp((mu - 0.5 * sigma^2) * T + sigma * sqrt(T) * Z
 #                              |_______________________|  |______________|
 #                                          |                     |
 #                                          m                     s
@@ -220,6 +221,8 @@ ax.set_ylabel("Probability Density")
 
 min_x = pnl.min()
 max_x = pnl.max()
+
+
 current_ticks = list(plt.xticks()[0]) # list converts the numpy array to a list so we can append it
 new_ticks = current_ticks + [min_x, max_x]
 plt.xticks(new_ticks, [f"{x:.2f}" for x in new_ticks])
@@ -229,6 +232,7 @@ ax.legend()
 plt.tight_layout()
 plt.savefig("figures/04_pnl_95%_var_es_histogram.png")
 plt.show() 
+
 
 # Finally, let's look at how VaR changes with horizon length (holding period) - currently we have only looked at a 1-year horizon
 # We can compare our actual simulated VaR growth with the theoretical VaR growth under GBM, which says that it grows with sqrt(T)
@@ -260,20 +264,22 @@ plt.savefig("figures/04_var_by_holding_period.png")
 plt.show()
 
 
+
+
 # ----------------------CONCLUSIONS----------------------------
 # PROFIT & LOSS HISTOGRAM
 #      - Right-skewed distribution, with a shorter tail to the left (losses) and a longer tail to the right (profits). 
 #                --> indicates that while there is a higher probability of small profits, there is also a significant risk of large losses.
-#      - Cannot lose > 62.82 EUR - cap on losses
-#      - At 95% confidence, VaR = 36.77 EUR, ES = 41.70 EUR. This is not too bad - it tells us that in the worst 5% of cases, we can expect to on average lose
-#        ~5 EUR more than the VaR threshold (13.6% of VaR). This is attributed to a thin and bounded tail
+#      - Cannot lose > 62.53 EUR - cap on losses
+#      - At 95% confidence, VaR = 36.69 EUR, ES = 42.06 EUR. This is not too bad - it tells us that in the worst 5% of cases, we can expect to on average lose
+#        5.37 EUR more than the VaR threshold (14.6% of VaR). This is attributed to a thin and bounded tail
 #      - The bulk of the distribution sits below zero, so more than half the simulated paths end in a loss. 
 #                 --> note that this is based on the trend in data from 2022-2026, so not necessarily representative of the long-term trend in carbon prices
-#      - The maximum profit from the histogram is 165.03 EUR - but note that there is no actual cap on the profit, this is just the maximum profit from the 10000 simulated paths.
+#      - The maximum profit from the histogram is 197.3 EUR - but note that there is no actual cap on the profit, this is just the maximum profit from the 10000 simulated paths.
 #
 # HOLDING PERIOD CHART
 #     - The √t scaling holds well for the first ~30 days, after which it begins to overstate the risk
-#     - The √t scaling grows boundlessly, while actual VaR growth is bounded by a maximum loss - in this case 62.82 EUR
+#     - The √t scaling grows boundlessly, while actual VaR growth is bounded by a maximum loss - in this case 62.53 EUR
 #                --> this explains why it overstates the risk after ~30 days - it doesn't account for the bounded nature of the distribution.
 #
 # NEXT SECTION:
