@@ -51,73 +51,10 @@ pnl = final_prices - S_0
 confidence_level=[0.90, 0.95, 0.99]
 
 
-def calculate_var_es(pnl_samples, confidence_level):
-    """
-    Calculate VaR and ES for a given set of profit and loss samples.
-    
-    Parameters:
-    pnl_samples (array): Array of profit and loss samples.
-    confidence_level (float): Confidence level for VaR and ES calculation (eg. 0.95 for 95% confidence).
-    
-    Returns:
-    tuple: VaR and ES values.
-    """
-   
-    var = -np.quantile(pnl_samples, 1-confidence_level)
-
-    es = -np.mean(pnl_samples[pnl_samples <= -var])
-
-    return var, es
-
-
-def bootstrap_var_es(pnl_samples, confidence_level, n_bootstrap=1000):
-    """
-    Bootstrap VaR and ES to estimate error.
-    
-    Parameters:
-    pnl_samples (array): Array of profit and loss samples.
-    confidence_level (float): Confidence level for VaR and ES calculation (eg. 0.95 for 95% confidence).
-    n_bootstrap (int): Number of bootstrap samples.
-    
-    Returns:
-    tuple: Arrays of bootstrapped VaR and ES values.
-    """
-    var_bootstrap, es_bootstrap = np.zeros(n_bootstrap), np.zeros(n_bootstrap)
-
-    for i in range(n_bootstrap):
-        resampled_pnls = np.random.choice(pnl_samples, size = len(pnl_samples), replace = True)
-        var_bootstrap[i], es_bootstrap[i] = calculate_var_es(resampled_pnls, confidence_level)
-
-    return np.std(var_bootstrap), np.std(es_bootstrap)
-
-
-def confidence_level_analysis(pnl_samples, confidence_level, n_bootstrap=1000):
-    """
-    Analyze VaR and ES for different confidence levels and estimate error.
-    
-    Parameters:
-    pnl_samples (array): Array of profit and loss samples.
-    confidence_level (list): List of confidence levels.
-    n_bootstrap (int): Number of bootstrap samples.
-    
-    Returns:
-    dict: Dictionary containing VaR, ES, and their errors for each confidence level.
-    """
-    results = {}
-    for cl in confidence_level:
-        var, es = calculate_var_es(pnl_samples, cl)
-        var_error, es_error = bootstrap_var_es(pnl_samples, cl, n_bootstrap)
-        results[cl] = {
-            "VaR": var,
-            "ES": es,
-            "VaR_Error": var_error,
-            "ES_Error": es_error
-        }
-    return results
-
+# VaR/ES functions now live in functions.py. See functions.py for function code.
+from functions import calculate_var_es, bootstrap_var_es, confidence_level_analysis
 
 # Printing results
-
 
 print("\nValue at Risk (VaR) = loss you exceed only (1 - confidence) of the time.")
 print("Expected Shortfall (ES)  = average loss on the occasions you DO exceed it. Therefore, ES >= VaR.\n")
