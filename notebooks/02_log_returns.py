@@ -32,6 +32,7 @@ plt.xlabel("Log Returns")
 plt.ylabel("Density")
 plt.title("EU Carbon Log Returns with Normal Distribution Overlay")
 plt.legend()
+plt.tight_layout()
 plt.savefig("figures/02_normal_overlay_log_returns.png")
 
 plt.show()
